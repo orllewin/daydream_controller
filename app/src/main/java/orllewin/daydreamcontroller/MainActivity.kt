@@ -89,6 +89,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        bluetooth.clear()
+    }
+
     var alreadyStarted = false
 
     private fun startBluetooth(){
@@ -99,11 +105,10 @@ class MainActivity : AppCompatActivity() {
                 binding.debugLog.append("$message\n")
             }
 
-        }, { changeMessage ->
+        }, { controllerEvent ->
             runOnUiThread {
-                binding.changeLog.text = changeMessage
+                binding.changeLog.text = controllerEvent.toString()
             }
-
         })
         bluetooth.logDevices()
         bluetooth.findController { success, message ->
