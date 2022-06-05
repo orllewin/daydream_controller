@@ -1,5 +1,6 @@
 package orllewin.daydreamcontroller.bluetooth
 
+import android.hardware.SensorManager
 import kotlin.math.pow
 
 class ControllerEvent {
@@ -9,10 +10,18 @@ class ControllerEvent {
     var binary: String? = null
     var binarySize = 0
 
+
+    private val accelerometerReading = FloatArray(3)
+    private val magnetometerReading = FloatArray(3)
+    private val rotationMatrix = FloatArray(9)
+    private val orientationAngles = FloatArray(3)
+
+
     override fun toString(): String {
         val gyroscope = gyroscope()
         val magnetometer = magnetometer()
         val accelerometer = accelerometer()
+        updateOrientation()
         return  "byte array size: ${bytes?.size}\n" +
                 "hex: $hex\n" +
                 "hexDigitsSize: $hexDigitsSize\n" +
@@ -28,6 +37,7 @@ class ControllerEvent {
                 "gyroscope: ${gyroscope.x},${gyroscope.y},${gyroscope.z}\n" +
                 "magnetometer: ${magnetometer.x},${magnetometer.y},${magnetometer.z}\n" +
                 "accelerometer: ${accelerometer.x},${accelerometer.y},${accelerometer.z}\n" +
+                "orientationAngles: ${orientationAngles[0]},${orientationAngles[1]},${orientationAngles[2]}\n" +
                 ""
     }
 
@@ -84,6 +94,21 @@ class ControllerEvent {
         } ?: run {
             return Vector(-1, -1, -1)
         }
+    }
+
+    fun updateOrientation(){
+        val accelerometer = accelerometer()
+        accelerometerReading[0] = accelerometer.x.toFloat()
+        accelerometerReading[1] = accelerometer.y.toFloat()
+        accelerometerReading[2] = accelerometer.z.toFloat()
+
+        val magnetometer = magnetometer()
+        magnetometerReading[0] = magnetometer.x.toFloat()
+        magnetometerReading[1] = magnetometer.y.toFloat()
+        magnetometerReading[2] = magnetometer.z.toFloat()
+
+        SensorManager.getRotationMatrix(rotationMatrix, null, accelerometerReading, magnetometerReading)
+        SensorManager.getOrientation(rotationMatrix, orientationAngles)
     }
 
     private fun binaryToDecimal(binary: String): Int {

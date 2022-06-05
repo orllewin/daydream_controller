@@ -40,6 +40,8 @@
         </ScrollView>
 
 
+
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/change_log"
             android:layout_alignParentBottom="true"
@@ -49,6 +51,13 @@
             android:textSize="@dimen/debug_text_size"
             android:layout_width="match_parent"
             android:layout_height="400dp" />
+
+        <orllewin.coraclelib.CoracleView
+            android:id="@+id/coracle_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.75"
+            />
 
     </RelativeLayout>
 

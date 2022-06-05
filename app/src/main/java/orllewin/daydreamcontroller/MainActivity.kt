@@ -19,6 +19,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import orllewin.coraclelib.AndroidRenderer
 import orllewin.daydreamcontroller.bluetooth.Bluetooth
 import orllewin.daydreamcontroller.databinding.ActivityMainBinding
 
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var bluetooth: Bluetooth
+    private lateinit var drawing: DaydreamTestDrawing
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -36,6 +38,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
+
+        drawing = DaydreamTestDrawing()
+        drawing.renderer(AndroidRenderer(binding.coracleView)).start()
 
         doPermissions()
     }
@@ -108,6 +113,7 @@ class MainActivity : AppCompatActivity() {
         }, { controllerEvent ->
             runOnUiThread {
                 binding.changeLog.text = controllerEvent.toString()
+                drawing.draw(controllerEvent)
             }
         })
         bluetooth.logDevices()
